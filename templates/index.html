@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduGenius - AI-Powered Learning Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E86AB;
+            --secondary-color: #A23B72;
+            --accent-color: #F18F01;
+            --success-color: #C73E1D;
+            --bg-light: #F8F9FA;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            max-width: 1200px;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+
+        .header-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .header-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .input-section {
+            padding: 3rem 2rem;
+        }
+
+        .prompt-input {
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .prompt-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(46, 134, 171, 0.25);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, var(--success-color), var(--accent-color));
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.7;
+            transform: none;
+        }
+
+        .example-prompts {
+            background: var(--bg-light);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .example-prompt {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .example-prompt:hover {
+            border-color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .result-section {
+            padding: 0 2rem 3rem;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: var(--primary-color);
+        }
+
+        .study-material {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .study-material h1,
+        .study-material h2,
+        .study-material h3 {
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .study-material h1 {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .study-material h2 {
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 1rem;
+        }
+
+        .study-material pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .study-material code {
+            background: #e2e8f0;
+            color: #2d3748;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+
+        .info-section {
+            background: rgba(46, 134, 171, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 2rem;
+            }
+            
+            .main-container {
+                margin: 1rem;
+                border-radius: 15px;
+            }
+            
+            .input-section, .result-section {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="main-container">
+            <!-- Header Section -->
+            <div class="header-section">
+                <h1><i class="fas fa-brain"></i> EduGenius</h1>
+                <p>AI-Powered On-Demand Learning Assistant</p>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3 class="mb-4"><i class="fas fa-lightbulb text-warning"></i> What would you like to learn today?</h3>
+                        
+                        <div class="mb-4">
+                            <textarea 
+                                id="promptInput" 
+                                class="form-control prompt-input" 
+                                placeholder="Example: Teach me about system calls in Operating System subject in Computer Science"
+                                rows="4"
+                            ></textarea>
+                        </div>
+
+                        <div class="text-center">
+                            <button id="generateBtn" class="btn generate-btn">
+                                <i class="fas fa-magic"></i> Generate Study Material
+                            </button>
+                        </div>
+
+                        <!-- Example Prompts -->
+                        <div class="example-prompts">
+                            <h5><i class="fas fa-star"></i> Try these example prompts:</h5>
+                            
+                            <div class="example-prompt" onclick="useExample(this)">
+                                <strong>Computer Science:</strong> "Explain machine learning algorithms and their applications in data science"
+                            </div>
+                            
+                            <div class="example-prompt" onclick="useExample(this)">
+                                <strong>Biology:</strong> "Teach me about photosynthesis and cellular respiration in plants"
+                            </div>
+                            
+                            <div class="example-prompt" onclick="useExample(this)">
+                                <strong>Physics:</strong> "Help me understand quantum mechanics and wave-particle duality"
+                            </div>
+                            
+                            <div class="example-prompt" onclick="useExample(this)">
+                                <strong>Mathematics:</strong> "Explain calculus derivatives and their real-world applications"
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="feature-cards">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h6>AI-Powered</h6>
+                                <p>Advanced AI understands your learning needs</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <h6>Comprehensive</h6>
+                                <p>Complete study materials with examples</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <h6>Instant</h6>
+                                <p>Get study materials in seconds</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <h6>Educational</h6>
+                                <p>Structured learning approach</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Section -->
+            <div id="loadingSection" class="loading-spinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h4 class="mt-3">Generating your personalized study material...</h4>
+                <p class="text-muted">This may take a few seconds</p>
+            </div>
+
+            <!-- Result Section -->
+            <div id="resultSection" class="result-section" style="display: none;">
+                <div id="alertContainer"></div>
+                <div id="studyMaterialContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/5.1.1/marked.min.js"></script>
+    <script>
+        const promptInput = document.getElementById('promptInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const loadingSection = document.getElementById('loadingSection');
+        const resultSection = document.getElementById('resultSection');
+        const alertContainer = document.getElementById('alertContainer');
+        const studyMaterialContainer = document.getElementById('studyMaterialContainer');
+
+        // Use example prompt
+        function useExample(element) {
+            const text = element.textContent.split(': ')[1];
+            promptInput.value = text.replace(/"/g, '');
+            promptInput.focus();
+        }
+
+        // Generate study material
+        generateBtn.addEventListener('click', async function() {
+            const prompt = promptInput.value.trim();
+            
+            if (!prompt) {
+                showAlert('Please enter a learning prompt', 'warning');
+                return;
+            }
+
+            // Show loading state
+            generateBtn.disabled = true;
+            loadingSection.style.display = 'block';
+            resultSection.style.display = 'none';
+            alertContainer.innerHTML = '';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayStudyMaterial(data.data);
+                    showAlert('Study material generated successfully!', 'success');
+                } else {
+                    showAlert(data.error || 'Failed to generate study material', 'danger');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'danger');
+                console.error('Error:', error);
+            } finally {
+                // Hide loading state
+                generateBtn.disabled = false;
+                loadingSection.style.display = 'none';
+                resultSection.style.display = 'block';
+            }
+        });
+
+        // Show alert message
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+        }
+
+        // Display study material
+        function displayStudyMaterial(data) {
+            const studyMaterial = data.study_material;
+            const parsedInfo = data.parsed_info;
+            const sources = data.sources;
+
+            // Convert markdown to HTML
+            const htmlContent = marked.parse(studyMaterial);
+
+            studyMaterialContainer.innerHTML = `
+                <div class="info-section">
+                    <h5><i class="fas fa-info-circle"></i> Generation Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Topic:</strong> ${parsedInfo.main_topic}<br>
+                            <strong>Domain:</strong> ${parsedInfo.subject_domain}<br>
+                            <strong>Level:</strong> ${parsedInfo.complexity_level}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Sources:</strong> ${sources.join(', ')}<br>
+                            <strong>Generated:</strong> ${new Date(data.generated_at).toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="study-material">
+                    ${htmlContent}
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-primary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print Study Material
+                    </button>
+                    <button class="btn btn-outline-secondary ms-2" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy Content
+                    </button>
+                </div>
+            `;
+        }
+
+        // Copy content to clipboard
+        function copyToClipboard() {
+            const studyContent = studyMaterialContainer.querySelector('.study-material').innerText;
+            navigator.clipboard.writeText(studyContent).then(() => {
+                showAlert('Content copied to clipboard!', 'success');
+            });
+        }
+
+        // Allow Enter + Ctrl/Cmd to submit
+        promptInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                generateBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
